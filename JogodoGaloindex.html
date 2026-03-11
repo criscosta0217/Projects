@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jogo do Galo</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    body { margin: 0; display: grid; place-items: center; min-height: 100vh; background: #0f172a; color: #e2e8f0; }
+    .card { width: min(520px, 92vw); background: #111827; border: 1px solid #24304a; border-radius: 16px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    h1 { margin: 0 0 10px; font-size: 20px; }
+    p { margin: 6px 0 14px; color: #b6c2d9; font-size: 14px; line-height: 1.4; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    button.cell {
+      aspect-ratio: 1 / 1;
+      font-size: 44px;
+      border-radius: 14px;
+      border: 1px solid #2b3957;
+      background: #0b1220;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: transform .05s ease, background .2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button.cell:active { transform: scale(.98); }
+    button.cell:disabled { cursor: default; opacity: .9; }
+    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-top: 14px; flex-wrap: wrap; }
+    .status { font-weight: 600; }
+    .actions button {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #2b3957;
+      background: #15233a;
+      color: #e2e8f0;
+      cursor: pointer;
+    }
+    .actions button:hover { background: #1a2b49; }
+    .hint { font-size: 12px; color: #93a4c7; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Jogo do Galo</h1>
+    <p>You are <b>X</b>. Computer is <b>O</b>. You always go first. Tap a square to play.</p>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="row">
+      <div class="status" id="status">Your turn (X)</div>
+      <div class="actions">
+        <button id="newGameBtn">New game</button>
+      </div>
+    </div>
+
+    <div class="hint">Works on iPhone / Android / laptop. Share this page as a link once hosted.</div>
+  </div>
+
+  <script>
+    // Board indexes: 0..8
+    // 0 1 2
+    // 3 4 5
+    // 6 7 8
+    let board = Array(9).fill(" ");
+    let gameOver = false;
+
+    const gridEl = document.getElementById("grid");
+    const statusEl = document.getElementById("status");
+    const newGameBtn = document.getElementById("newGameBtn");
+
+    const wins = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function render() {
+      gridEl.innerHTML = "";
+      for (let i = 0; i < 9; i++) {
+        const btn = document.createElement("button");
+        btn.className = "cell";
+        btn.textContent = board[i] === " " ? "" : board[i];
+        btn.disabled = gameOver || board[i] !== " ";
+        btn.addEventListener("click", () => playerMove(i));
+        gridEl.appendChild(btn);
+      }
+    }
+
+    function checkWinner(letter) {
+      return wins.some(line => line.every(idx => board[idx] === letter));
+    }
+
+    function boardFull() {
+      return board.every(c => c !== " ");
+    }
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function endGame(message) {
+      gameOver = true;
+      setStatus(message);
+      render();
+    }
+
+    function playerMove(pos) {
+      if (gameOver || board[pos] !== " ") return;
+
+      board[pos] = "X";
+      render();
+
+      if (checkWinner("X")) {
+        endGame("You win! 🎉");
+        return;
+      }
+      if (boardFull()) {
+        endGame("It's a tie! 🤝");
+        return;
+      }
+
+      setStatus("Computer thinking…");
+      // small delay so it feels natural
+      setTimeout(computerMove, 250);
+    }
+
+    function computerMove() {
+      if (gameOver) return;
+
+      const possible = [];
+      for (let i = 0; i < 9; i++) if (board[i] === " ") possible.push(i);
+
+      if (possible.length === 0) {
+        endGame("It's a tie! 🤝");
+        return;
+      }
+
+      const choice = possible[Math.floor(Math.random() * possible.length)];
+      board[choice] = "O";
+      render();
+
+      if (checkWinner("O")) {
+        endGame("Computer wins! 🤖");
+        return;
+      }
+      if (boardFull()) {
+        endGame("It's a tie! 🤝");
+        return;
+      }
+
+      setStatus("Your turn (X)");
+    }
+
+    function newGame() {
+      board = Array(9).fill(" ");
+      gameOver = false;
+      setStatus("Your turn (X)");
+      render();
+    }
+
+    newGameBtn.addEventListener("click", newGame);
+
+    // start
+    newGame();
+  </script>
+</body>
+</html>
