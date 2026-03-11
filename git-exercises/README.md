@@ -1,11 +1,32 @@
-## Find a commit that has been lost
+# Git Exercises Practice
 
-You have created a commit with very important piece of work. You then wanted to fix something in the last commit
-so you have amended it. However, you have just realized you have accidentally committed the wrong changes and you
-desperately need the first version of the commit you have just amended.
+Completed exercises from gitexercises.fracz.com.
 
-However, there is no previous version in the history - you have edited the last commit with `git commit --amend`.
+Progress completed so far:
+- master
+- commit-one-file
+- commit-one-file-staged
+- ignore-them
+- chase-branch
+- merge-conflict
+- save-your-work
+- change-branch-history
+- remove-ignored
+- case-sensitive-filename
+- fix-typo
+- forge-date
+- fix-old-typo
+- commit-lost
 
-Your goal is to find the first version of the commit in the repository. It must be somewhere...
+Topics practised:
+- staging and committing
+- .gitignore
+- branches and merges
+- merge conflicts
+- stash
+- rebase
+- amend
+- reflog
+- recovering lost commits
 
-Once found, force the `commit-lost` branch to point at it again and verify the solution.
+<img width="1532" height="1384" alt="image" src="https://github.com/user-attachments/assets/ed0970fd-4054-48b0-81b4-e04cb34a46cd" />
